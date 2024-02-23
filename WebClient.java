@@ -30,6 +30,8 @@ public class WebClient {
     // The following regex was constructed with help from the website: https://regex101.com/
     private static final String URL_REGEX = "([a-zA-Z]+)://([^:/]+):?(\\d*)?/(\\S+)";
     
+    private static final int EOF = -1;
+    private static final int SUCCESSFUL_TERMINATION = 0;
     private static final int UNSUCCESSFUL_TERMINATION = -1;
     private static final int NO_PORT = 0;
     private static final String STRING_TO_BYTE_CHARSET = "US-ASCII";
@@ -134,42 +136,22 @@ public class WebClient {
     /**
      * Establishes a connection with a host at a specific port number. Assumes the
      * hostname and port have been defined by some other part of the program.
+     * @throws IOException 
+     * @throws UnknownHostException 
      */  
-    private void establishConnection() {
-        boolean wasSuccessful = false;
-
-        try {
-            switch (protocol) {
-                case HTTP:
-                    socket = new Socket(hostname, port);
-                    break;
-                // if the protocol is HTTP, we need a Secure Socket Layer (SSL) Socket.
-                case HTTPS:
-                    SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-                    socket = (SSLSocket) factory.createSocket(hostname, port);
-                    break;
-            }
-            inputStream = socket.getInputStream();
-            outputStream = socket.getOutputStream();
-            wasSuccessful = true;
-        } 
-        /*
-         * We catch UnknownHostException first because it is a subclass of IOException. Of course,
-         * the behaviour in both catch blocks is identical (printStackTrace), but if we wanted different
-         * behaviour in the future, having these different blocks is good practice.
-         */
-        catch (UnknownHostException e) {
-            e.printStackTrace();
-        } 
-        catch (IOException e) {
-            e.printStackTrace();
-        } 
-        finally {
-            if (!wasSuccessful) {
-                closeGracefully(outputStream, inputStream, socket);
-                System.exit(UNSUCCESSFUL_TERMINATION);
-            }
+    private void establishConnection() throws UnknownHostException, IOException {
+        switch (protocol) {
+            case HTTP:
+                socket = new Socket(hostname, port);
+                break;
+            // if the protocol is HTTP, we need a Secure Socket Layer (SSL) Socket.
+            case HTTPS:
+                SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+                socket = (SSLSocket) factory.createSocket(hostname, port);
+                break;
         }
+        inputStream = socket.getInputStream();
+        outputStream = socket.getOutputStream();
     }
 
     /**
@@ -197,24 +179,28 @@ public class WebClient {
 
     /**
      * Send a properly formatted HTTP GET request message.
+     * 
+     * @param getRequest Properly formatted GET request.
+     * @throws IOException 
      */
-    private void sendGetRequest(String getRequest) {
-        try {
-            byte[] getRequestBytes = getRequest.getBytes(STRING_TO_BYTE_CHARSET);
-            outputStream.write(getRequestBytes);
+    private void sendGetRequest(String getRequest) throws IOException {
+        byte[] getRequestBytes = getRequest.getBytes(STRING_TO_BYTE_CHARSET);
+        outputStream.write(getRequestBytes);
             
-            /*
-             * flush to ensure request is actually written to the socket; we can also shutdown
-             * the output stream as no further requests need to be sent to the server
-             */
-            outputStream.flush();
-            socket.shutdownOutput();
-        } 
-        catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } 
-        catch (IOException e) {
-            e.printStackTrace();
+        /*
+        * flush to ensure request is actually written to the socket; we can also shutdown
+        * the output stream as no further requests need to be sent to the server
+        */
+        outputStream.flush();
+        socket.shutdownOutput();
+    } 
+
+    
+    private void readServerResponse() throws IOException {
+        int b;
+
+        while ((b = inputStream.read()) != EOF) {
+            System.out.println(inputStream);
         }
     }
 
@@ -224,9 +210,35 @@ public class WebClient {
      * @param url	URL of the object to be downloaded. It is a fully qualified URL.
      */
 	public void getObject(String url) {
-        parseUrl(url);
-        establishConnection();
-        sendGetRequest(constructGetRequest());
+        boolean wasSuccessful = true;
+
+        try {
+            parseUrl(url);
+            establishConnection();
+            sendGetRequest(constructGetRequest());
+            readServerResponse();
+        } 
+        catch (UnknownHostException e) {
+            wasSuccessful = false;
+            e.printStackTrace();
+        } 
+        catch (IOException e) {
+            wasSuccessful = false;
+            e.printStackTrace();
+        }
+        finally {
+            closeGracefully(
+                outputStream,
+                inputStream,
+                socket
+            );
+            if (wasSuccessful) {
+                System.exit(SUCCESSFUL_TERMINATION);
+            } 
+            else {
+                System.exit(UNSUCCESSFUL_TERMINATION);
+            }
+        }
     }
 
 }
