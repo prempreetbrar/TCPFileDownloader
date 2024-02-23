@@ -26,18 +26,21 @@ import java.util.regex.Pattern;
 public class WebClient {
 	private static final Logger logger = Logger.getLogger("WebClient"); // global logger
 
-    private static final int UNSUCCESSFUL_TERMINATION = -1;
-
     // Used for parsing URL.                  protocol     hostname   port   pathname
     // The following regex was constructed with help from the website: https://regex101.com/
-    private static final String URL_REGEX = "([a-zA-Z]+)://([^:/]+):?(\\d*)?/(\\S+)"; 
+    private static final String URL_REGEX = "([a-zA-Z]+)://([^:/]+):?(\\d*)?/(\\S+)";
+    
+    private static final int UNSUCCESSFUL_TERMINATION = -1;
     private static final int NO_PORT = 0;
+    private static final String STRING_TO_BYTE_CHARSET = "US-ASCII";
 
     // currently, we lowercase the parsed protocol from the URL; however, we may change
     // that implementation in the future, in which case we do not want to have to change
     // every single string comparison in our program.
     private static final String HTTP = "http";
     private static final String HTTPS = "https";
+    private static final int HTTP_DEFAULT_PORT = 80;
+    private static final int HTTPS_DEFAULT_PORT = 443;
     
     // url variables
     private String protocol;
@@ -115,10 +118,10 @@ public class WebClient {
             if (portAsString.isEmpty()) {
                 switch (protocol) {
                     case HTTP:
-                        port = 80;
+                        port = HTTP_DEFAULT_PORT;
                         break;
                     case HTTPS:
-                        port = 443;
+                        port = HTTPS_DEFAULT_PORT;
                         break;
                 }
             } else {
@@ -185,11 +188,34 @@ public class WebClient {
          * in a similar manner, but these could just as easily be combined into a single string.
          */
         String requestLine = String.format("%s /%s %s\r\n", httpMethod, pathname, httpVersion);
-        String headerLines = requestLine + hostHeader + connectionHeader;
+        String headerLines = hostHeader + connectionHeader;
         String endOfHeaderLines = "\r\n";
         String request = requestLine + headerLines + endOfHeaderLines;
 
         return request;
+    }
+
+    /**
+     * Send a properly formatted HTTP GET request message.
+     */
+    private void sendGetRequest(String getRequest) {
+        try {
+            byte[] getRequestBytes = getRequest.getBytes(STRING_TO_BYTE_CHARSET);
+            outputStream.write(getRequestBytes);
+            
+            /*
+             * flush to ensure request is actually written to the socket; we can also shutdown
+             * the output stream as no further requests need to be sent to the server
+             */
+            outputStream.flush();
+            socket.shutdownOutput();
+        } 
+        catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } 
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -200,7 +226,7 @@ public class WebClient {
 	public void getObject(String url) {
         parseUrl(url);
         establishConnection();
-        String getRequest = constructGetRequest();
+        sendGetRequest(constructGetRequest());
     }
 
 }
