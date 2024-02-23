@@ -146,6 +146,8 @@ public class WebClient {
                     socket = (SSLSocket) factory.createSocket(hostname, port);
                     break;
             }
+            inputStream = socket.getInputStream();
+            outputStream = socket.getOutputStream();
             wasSuccessful = true;
         } 
         /*
@@ -168,6 +170,29 @@ public class WebClient {
     }
 
     /**
+     * Create a properly formatted HTTP GET request message.
+     *
+     * @return A request message that is ready to send to the server.
+     */
+    private String constructGetRequest() {
+        String httpMethod = "GET";
+        String httpVersion = "HTTP/1.1";
+        String hostHeader = "Host: " + hostname + "\r\n";
+        String connectionHeader = "Connection: close\r\n";
+
+        /*
+         * A request message has these three "components"; this is why the code is broken up
+         * in a similar manner, but these could just as easily be combined into a single string.
+         */
+        String requestLine = String.format("%s /%s %s\r\n", httpMethod, pathname, httpVersion);
+        String headerLines = requestLine + hostHeader + connectionHeader;
+        String endOfHeaderLines = "\r\n";
+        String request = requestLine + headerLines + endOfHeaderLines;
+
+        return request;
+    }
+
+    /**
      * Downloads the object specified by the parameter url.
 	 *
      * @param url	URL of the object to be downloaded. It is a fully qualified URL.
@@ -175,6 +200,7 @@ public class WebClient {
 	public void getObject(String url) {
         parseUrl(url);
         establishConnection();
+        String getRequest = constructGetRequest();
     }
 
 }
