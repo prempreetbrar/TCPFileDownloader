@@ -59,7 +59,7 @@ public class WebClient {
     private OutputStream outputStream;
     private FileOutputStream fileOutputStream;
     private static final int EOF = -1;
-    private static final int BUFFER_SIZE = 12000;
+    private static final int BUFFER_SIZE = 4096;
 
     /**
      * Default no-arg constructor
@@ -203,7 +203,6 @@ public class WebClient {
         * the output stream as no further requests need to be sent to the server
         */
         outputStream.flush();
-        socket.shutdownOutput();
     } 
     
     private void readResponse() throws IOException {
@@ -223,6 +222,8 @@ public class WebClient {
         boolean readFirstLine = false;
         String response = "";
 
+        boolean flag = true;
+
         while ((currByte = inputStream.read()) != EOF) {
             currLine += (char) currByte;
 
@@ -235,14 +236,13 @@ public class WebClient {
                     if (Integer.valueOf(statusLine[STATUS_CODE]) != SUCCESS_STATUS_CODE ||
                         !(statusLine[STATUS_PHRASE].trim().equals(SUCCESS_STATUS_PHRASE))
                     ) {
-                        return false;
+                        flag = false;
                     }
                     readFirstLine = true;
                 }
                 
                 if (currLine.equals("\r\n")) {
-                    System.out.println(response);
-                    return true;
+                    break;
                 }
                 currLine = "";
                 prevByte = NO_BYTE;
@@ -250,7 +250,8 @@ public class WebClient {
             }
             prevByte = currByte;
         }
-        return true;
+        System.out.println(response);
+        return flag;
     }
 
     private void readPayload() throws IOException {
