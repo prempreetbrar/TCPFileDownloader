@@ -30,11 +30,11 @@ public class WebClient {
     // The following regex was constructed with help from the website: https://regex101.com/
     private static final String URL_REGEX = "([a-zA-Z]+)://([^:/]+):?(\\d*)?/(\\S+)";
     
-    private static final int EOF = -1;
     private static final int SUCCESSFUL_TERMINATION = 0;
     private static final int UNSUCCESSFUL_TERMINATION = -1;
     private static final int NO_PORT = 0;
     private static final String STRING_TO_BYTE_CHARSET = "US-ASCII";
+    private static final int NO_BYTE = -1;
 
     // currently, we lowercase the parsed protocol from the URL; however, we may change
     // that implementation in the future, in which case we do not want to have to change
@@ -43,17 +43,23 @@ public class WebClient {
     private static final String HTTPS = "https";
     private static final int HTTP_DEFAULT_PORT = 80;
     private static final int HTTPS_DEFAULT_PORT = 443;
+    private static final String SUCCESS_STATUS_PHRASE = "OK";
+    private static final int SUCCESS_STATUS_CODE = 200;
     
     // url variables
     private String protocol;
     private String hostname;
     private int port;
     private String pathname;
+    private String filename;
 
     // connection variables
     private Socket socket;
     private InputStream inputStream;
     private OutputStream outputStream;
+    private FileOutputStream fileOutputStream;
+    private static final int EOF = -1;
+    private static final int BUFFER_SIZE = 12000;
 
     /**
      * Default no-arg constructor
@@ -63,6 +69,7 @@ public class WebClient {
         hostname = null;
         port = NO_PORT;
         pathname = null;
+        filename = null;
 
         socket = null;
         inputStream = null;
@@ -130,6 +137,8 @@ public class WebClient {
                 port = Integer.valueOf(portAsString);
             }
             pathname = matcher.group(4);
+            String[] subdirectories = pathname.split("/");
+            filename = subdirectories[subdirectories.length - 1];
         }
     }
 
@@ -173,7 +182,7 @@ public class WebClient {
         String headerLines = hostHeader + connectionHeader;
         String endOfHeaderLines = "\r\n";
         String request = requestLine + headerLines + endOfHeaderLines;
-
+        
         return request;
     }
 
@@ -184,6 +193,8 @@ public class WebClient {
      * @throws IOException 
      */
     private void sendGetRequest(String getRequest) throws IOException {
+        System.out.println(getRequest);
+
         byte[] getRequestBytes = getRequest.getBytes(STRING_TO_BYTE_CHARSET);
         outputStream.write(getRequestBytes);
             
@@ -194,14 +205,74 @@ public class WebClient {
         outputStream.flush();
         socket.shutdownOutput();
     } 
-
     
-    private void readServerResponse() throws IOException {
-        int b;
-
-        while ((b = inputStream.read()) != EOF) {
-            System.out.println(inputStream);
+    private void readResponse() throws IOException {
+        if (successfullyReadHeaderLines()) {
+            readPayload();
         }
+    }
+
+    private boolean successfullyReadHeaderLines() throws IOException {
+        int prevByte = NO_BYTE;
+        int currByte = NO_BYTE;
+
+        int STATUS_CODE = 1;
+        int STATUS_PHRASE = 2;
+
+        String currLine = "";
+        boolean readFirstLine = false;
+        String response = "";
+
+        while ((currByte = inputStream.read()) != EOF) {
+            currLine += (char) currByte;
+
+            if (prevByte == '\r' && currByte == '\n') {
+                response += currLine;
+
+                if (!readFirstLine) {
+                    String[] statusLine = currLine.split(" ");
+
+                    if (Integer.valueOf(statusLine[STATUS_CODE]) != SUCCESS_STATUS_CODE ||
+                        !(statusLine[STATUS_PHRASE].trim().equals(SUCCESS_STATUS_PHRASE))
+                    ) {
+                        return false;
+                    }
+                    readFirstLine = true;
+                }
+                
+                if (currLine.equals("\r\n")) {
+                    System.out.println(response);
+                    return true;
+                }
+                currLine = "";
+                prevByte = NO_BYTE;
+                currByte = NO_BYTE;
+            }
+            prevByte = currByte;
+        }
+        return true;
+    }
+
+    private void readPayload() throws IOException {
+        /*
+        * The numBytes tells us how many bytes we actually read from the server; this may
+        * be different from the buffer size (ie. if the number of bytes remaining is <
+        * buffer.length). This is why we cannot specify buffer.length as the number of bytes being written
+        * to the file, as we would get an IndexOutOfBounds exception when we reach the end.
+        */
+        int numBytes = 0;
+        byte[] buffer = new byte[BUFFER_SIZE];            
+        fileOutputStream = new FileOutputStream(filename);
+
+        while ((numBytes = inputStream.read(buffer)) != EOF) {
+            fileOutputStream.write(buffer, 0, numBytes);
+        }
+
+        /*
+        * we are only going to open the file after the entire file has been written; therefore, we can flush at the end. 
+        * There is no urgency when outputting to file.
+        */
+        fileOutputStream.flush();
     }
 
     /**
@@ -216,7 +287,7 @@ public class WebClient {
             parseUrl(url);
             establishConnection();
             sendGetRequest(constructGetRequest());
-            readServerResponse();
+            readResponse();
         } 
         catch (UnknownHostException e) {
             wasSuccessful = false;
@@ -228,6 +299,7 @@ public class WebClient {
         }
         finally {
             closeGracefully(
+                fileOutputStream,
                 outputStream,
                 inputStream,
                 socket
