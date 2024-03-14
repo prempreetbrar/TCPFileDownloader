@@ -1,6 +1,10 @@
 
 /**
  * A driver class for WebClient
+ * 
+ * One command line argument is required: 
+ * 		- the URL of the object to be downloaded
+ *
  */
 
 import java.io.*;
