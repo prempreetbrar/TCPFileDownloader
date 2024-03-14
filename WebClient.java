@@ -1,13 +1,6 @@
  /**
  * WebClient Class
  *
- * CPSC 441 - L01 - T01
- * Assignment 2
- * 
- * TA: Amir Shani
- * Student: Prempreet Brar
- * UCID: 30112576
- *
  * This class initiates a TCP connection to a remote server, downloads a requested resource
  * (file), and then writes the file to the local working directory. 
  */

@@ -1,18 +1,6 @@
 
 /**
  * A driver class for WebClient
- * 
- * CPSC 441
- * Assignment 2
- * 
- * 
- * One command line argument is required: 
- * 		- the URL of the object to be downloaded
- * 
- * 
- * @author 	Majid Ghaderi
- * @version 2024
- *
  */
 
 import java.io.*;
