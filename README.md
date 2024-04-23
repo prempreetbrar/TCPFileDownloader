@@ -1,6 +1,9 @@
 # TCP File Downloader
 
 A program that downloads a file from the Internet given a URL over TCP. Watch a gif of me interacting with it below!
+&nbsp;
+![photo](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/d2f1487f-fdbe-4837-9ac3-bb249496ef39)
+&nbsp;
 
 ## Features
 - Supports both `HTTP` and `HTTPS` URLs; if the protocol is `HTTP`, a regular `Socket` is used to establish a TCP connection; if the protocol is `HTTPS`,
@@ -15,20 +18,28 @@ A program that downloads a file from the Internet given a URL over TCP. Watch a 
 ## If you want to start up the project on your local machine:
 1. Download the code as a ZIP:
 &nbsp;
-![Download](https://github.com/prempreetbrar/VideoConsumptionAndMood/assets/89614923/0a6f2c96-1b3b-449d-b823-91e6d80f8a98)
+![download](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/9fb50273-25c4-45e9-8f30-a388c3cd38cb)
 &nbsp;
 
-2. Open the .pde file. When prompted, keep "VideoConsumptionAndMood-main" as the sketch folder:
+2. Unzip the code:
 &nbsp;
-![Open](https://github.com/prempreetbrar/VideoConsumptionAndMood/assets/89614923/12cd7702-7f18-4666-86ee-0bf1fc02d9d2)
-&nbsp;
-
-3. Click the play button on the processing panel to start the sketch:
-&nbsp;
-![Play](https://github.com/prempreetbrar/VideoConsumptionAndMood/assets/89614923/68730272-ca0c-457c-9054-106f87ceb814)
+![file](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/15238822-a37f-43e0-89f5-709719d7f99b)
 &nbsp;
 
-4. Have fun interacting with the visualization!
+3. Open the folder in an IDE, such as VSCode:
 &nbsp;
-![image](https://github.com/prempreetbrar/VideoConsumptionAndMood/assets/89614923/9ec08893-f401-4513-b5e6-eccb69e4f340)
+![code](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/8eeffe74-0bb9-49f9-8e5f-45dbc5af300a)
+&nbsp;
+
+4. Obtain the URL of a file from the internet, copy it. Then, run the code by doing
+   ```javac *.java
+      java ClientDriver -u <url_copied_from_internet>
+   ```
+   &nbsp;
+  ![photo](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/c03f34ad-558d-4665-af01-2a1f7befaa20)
+&nbsp;
+
+5. Interact with the file as you please!
+&nbsp;
+![enjoy](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/7641c504-2615-41f5-97c1-bf97e5fbaf86)
 
