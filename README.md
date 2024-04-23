@@ -18,20 +18,21 @@ A program that downloads a file from the Internet given a URL over TCP. Watch a 
 ## If you want to start up the project on your local machine:
 1. Download the code as a ZIP:
 &nbsp;
+&nbsp;
 ![download](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/9fb50273-25c4-45e9-8f30-a388c3cd38cb)
 &nbsp;
 
-2. Unzip the code:
+3. Unzip the code:
 &nbsp;
 ![file](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/15238822-a37f-43e0-89f5-709719d7f99b)
 &nbsp;
 
-3. Open the folder in an IDE, such as VSCode:
+4. Open the folder in an IDE, such as VSCode:
 &nbsp;
 ![code](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/8eeffe74-0bb9-49f9-8e5f-45dbc5af300a)
 &nbsp;
 
-4. Obtain the URL of a file from the internet, copy it. Then, run the code by doing
+5. Obtain the URL of a file from the internet, copy it. Then, run the code by doing
    ```javac *.java
       java ClientDriver -u <url_copied_from_internet>
    ```
@@ -39,7 +40,7 @@ A program that downloads a file from the Internet given a URL over TCP. Watch a 
   ![photo](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/c03f34ad-558d-4665-af01-2a1f7befaa20)
 &nbsp;
 
-5. Interact with the file as you please!
+6. Interact with the file as you please!
 &nbsp;
 ![enjoy](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/7641c504-2615-41f5-97c1-bf97e5fbaf86)
 
