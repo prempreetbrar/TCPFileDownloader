@@ -17,7 +17,8 @@ A program that downloads a file from the Internet given a URL over TCP. Watch a 
 
 ## If you want to start up the project on your local machine:
 1. Download the code as a ZIP:
-&nbsp;
+<br />
+<br />
 &nbsp;
 ![download](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/9fb50273-25c4-45e9-8f30-a388c3cd38cb)
 &nbsp;
