@@ -3,7 +3,7 @@
  * A driver class for WebClient
  * 
  * One command line argument is required: 
- * 		- the URL of the object to be downloaded
+ * 		-u: the URL of the object to be downloaded
  *
  */
 
@@ -16,12 +16,6 @@ public class ClientDriver {
 	private static final Logger logger = Logger.getLogger("WebClient");
 	
 	public static void main(String[] args) {
-		// example URLs
-		// http://pages.cs.ucalgary.ca/~mghaderi/files/large.jpg
-		// http://pages.cpsc.ucalgary.ca/~mghaderi/files/medium.txt
-		// https://pages.cpsc.ucalgary.ca/~mghaderi/files/large.pdf
-		// https://pages.cpsc.ucalgary.ca/~mghaderi/files/medium.pdf
-
 		// input URL is required
 		if (args.length == 0) {
 			System.out.println("incorrect usage, input URL is required");
