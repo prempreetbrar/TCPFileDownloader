@@ -1,7 +1,7 @@
 # TCP File Downloader
 
 A program that downloads a file from the Internet given a URL over TCP. Watch a gif of me interacting with it below!
-&nbsp;
+<br></br>
 ![photo](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/d2f1487f-fdbe-4837-9ac3-bb249496ef39)
 &nbsp;
 
@@ -22,12 +22,12 @@ A program that downloads a file from the Internet given a URL over TCP. Watch a 
 &nbsp;
 
 3. Unzip the code:
-&nbsp;
+<br></br>
 ![file](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/15238822-a37f-43e0-89f5-709719d7f99b)
 &nbsp;
 
 4. Open the folder in an IDE, such as VSCode:
-&nbsp;
+<br></br>
 ![code](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/8eeffe74-0bb9-49f9-8e5f-45dbc5af300a)
 &nbsp;
 
@@ -35,11 +35,11 @@ A program that downloads a file from the Internet given a URL over TCP. Watch a 
    ```javac *.java
       java ClientDriver -u <url_copied_from_internet>
    ```
-   &nbsp;
+<br></br>
   ![photo](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/c03f34ad-558d-4665-af01-2a1f7befaa20)
 &nbsp;
 
 6. Interact with the file as you please!
-&nbsp;
+<br></br>
 ![enjoy](https://github.com/prempreetbrar/TCPFileDownloader/assets/89614923/7641c504-2615-41f5-97c1-bf97e5fbaf86)
 
